@@ -7,16 +7,46 @@ document.addEventListener("DOMContentLoaded", () => {
    const soundToggle = document.getElementById("sound-toggle");
 
    function removeSection(sectionName) {
-
       const introBtn = document.getElementById("open");
 
-      introBtn.addEventListener("click", () => {
+      introBtn.addEventListener("click", (e) => {
+         e.preventDefault();
+
          sectionName.classList.remove("active");
          htmlElement.classList.remove("active");
-         // Play music when the intro section is removed
+
          music.play().catch((error) => {
             console.warn("Autoplay failed:", error);
          });
+
+         const speed = 1;
+         let position = window.scrollY;
+         let isAutoScrolling = true;
+         let animationId = null;
+
+         function autoScroll() {
+            if (!isAutoScrolling) return;
+
+            position += speed;
+            window.scrollTo(0, position);
+
+            animationId = requestAnimationFrame(autoScroll);
+         }
+
+         function stopAutoScroll() {
+            isAutoScrolling = false;
+
+            if (animationId) {
+               cancelAnimationFrame(animationId);
+               animationId = null;
+            }
+         }
+
+         window.addEventListener("wheel", stopAutoScroll, { passive: true });
+         window.addEventListener("touchstart", stopAutoScroll, { passive: true });
+         window.addEventListener("keydown", stopAutoScroll, { passive: true });
+
+         autoScroll();
       });
    }
 
@@ -221,7 +251,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       try {
          await fetch(
-            "https://docs.google.com/forms/d/e/1FAIpQLScrA07Iy6mYxF5tFGX8oog7KNQ61Nkn1sHHnM6XzcWhzjjI0A/formResponse",
+            "https://docs.google.com/forms/d/e/1FAIpQLSfwY_jwzV7tJTZZ6UfLZaqyK5QJGyYaIbAZwgel15830WgwyQ/formResponse", /* formResponse */
             {
                method: "POST",
                mode: "no-cors",
@@ -233,7 +263,7 @@ document.addEventListener("DOMContentLoaded", () => {
          );
 
          form.reset();
-         alert("Спасибо! Ваш ответ отправлен.");
+         alert("Raxmat! Sizning javobingiz qabul qilindi.");
       } catch (err) {
          console.error("Ошибка отправки:", err);
          alert("Не удалось отправить форму.");

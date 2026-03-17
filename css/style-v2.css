@@ -242,6 +242,8 @@ p {
    -moz-box-shadow: 4px 4px 8px 0px #c9c9c9;
    box-shadow: 4px 4px 8px 0px #c9c9c9;
 
+   border: none;
+
 
    &:hover {
       -webkit-box-shadow: 4px 4px 8px 0px #c9c9c900;
