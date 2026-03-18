@@ -64,17 +64,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
          /* auto-scroll  */
          const speed = 1;
-         let position = window.scrollY;
          let isAutoScrolling = true;
          let animationId = null;
+         let autoScrollStarted = false;
 
          function autoScroll() {
             if (!isAutoScrolling) return;
 
-            position += speed;
-            window.scrollTo(0, position);
+            const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+            const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
 
+            if (currentScroll >= maxScroll) {
+               stopAutoScroll();
+               return;
+            }
+
+            window.scrollBy(0, speed);
             animationId = requestAnimationFrame(autoScroll);
+         }
+
+         function startAutoScroll() {
+            if (autoScrollStarted || !isAutoScrolling) return;
+            autoScrollStarted = true;
+            autoScroll();
          }
 
          function stopAutoScroll() {
@@ -86,17 +98,16 @@ document.addEventListener("DOMContentLoaded", () => {
             }
          }
 
-         // ⏱️ Start after 3 seconds
+         // Start after 3 seconds
          setTimeout(() => {
-            if (isAutoScrolling) {
-               autoScroll();
-            }
+            startAutoScroll();
          }, 3000);
 
-         // Stop on user interaction
+         // Stop only on real user interaction
          window.addEventListener("wheel", stopAutoScroll, { passive: true });
-         window.addEventListener("touchstart", stopAutoScroll, { passive: true });
-         window.addEventListener("keydown", stopAutoScroll, { passive: true });
+         window.addEventListener("touchmove", stopAutoScroll, { passive: true });
+         window.addEventListener("keydown", stopAutoScroll);
+         window.addEventListener("mousedown", stopAutoScroll);
       });
    }
 
